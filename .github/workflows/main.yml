@@ -1,50 +1,32 @@
-name: Angular App
-'on':
+name: Deploy to GitHub Pages
+
+on:
   push:
     branches:
       - main
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: '${{ runner.os }}-node-${{ hashFiles(''**/package-lock.json'') }}'
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Install dependencies
-        run: npm i
-      - name: Build
-        run: npm run build
   deploy:
-    needs: build
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: 18
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: '${{ runner.os }}-node-${{ hashFiles(''**/package-lock.json'') }}'
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: 14
+
       - name: Install dependencies
-        run: npm i
-      - name: Deploy
+        run: npm ci
+
+      - name: Build
+        run: npm run build -- --prod
+
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: '${{ secrets.GITHUB_TOKEN }}'
-          publish_dir: ./public
+          personal_token: ${{ secrets.GH_TOKEN }}
+          external_repository: <your-username>/<your-repo>
+          publish_dir: ./dist/your-app-name
