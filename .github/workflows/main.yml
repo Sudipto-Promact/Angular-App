@@ -41,10 +41,10 @@ jobs:
           key: '${{ runner.os }}-node-${{ hashFiles(''**/package-lock.json'') }}'
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Install dependencies
-        run: npm i
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_branch: gp-pages  # default: gh-pages
+            publish_dir: ./public
+            user_name: 'github-actions[bot]'
+            user_email: 'github-actions[bot]@users.noreply.github.com'
